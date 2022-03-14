@@ -74,7 +74,10 @@ cc_library(
         "@com_google_glog//:glog",
         "@fmeum_rules_jni//jni",
         "@jazzer_com_github_gflags_gflags//:gflags",
-    ],
+    ] + select({
+        "@platforms//os:windows": ["//agent/src/main/native/com/code_intelligence/jazzer/runtime:jazzer_fuzzer_callbacks_for_static_linking"],
+        "//conditions:default": [],
+    }),
     # Symbols are only referenced dynamically via JNI.
     alwayslink = True,
 )

@@ -25,11 +25,13 @@ final public class TraceDataFlowNativeCallbacks {
     try {
       RulesJni.loadLibrary("jazzer_fuzzer_callbacks", TraceDataFlowNativeCallbacks.class);
     } catch (UnsatisfiedLinkError e) {
-      // In some scenarios (e.g. Java unit tests that do not go through the driver), this native
-      // library load will expectedly fail due to missing symbols. We make this case non-fatal as
-      // every actual usage of native methods in this class would result in another
-      // UnsatisfiedLinkError.
-      e.printStackTrace();
+      if (!System.getProperty("os.name").startsWith("Windows")) {
+        // In some scenarios (e.g. Java unit tests that do not go through the driver), this native
+        // library load will expectedly fail due to missing symbols. We make this case non-fatal as
+        // every actual usage of native methods in this class would result in another
+        // UnsatisfiedLinkError.
+        e.printStackTrace();
+      }
     }
   }
 
