@@ -1,9 +1,10 @@
 package com.example;
 import java.lang.Math;
 import java.util.HashMap;
+import java.util.Random;
 import com.code_intelligence.jazzer.api.FuzzedDataProvider;
 
-public class UnConditionalWait
+public class UnconditionalWait_5000
 {
     static int maxCapacity = 5000;
     static int maxWaitingTime = 10000;
@@ -11,7 +12,7 @@ public class UnConditionalWait
 
     public static void fuzzerTestOneInput(FuzzedDataProvider data)
     {
-        maxCapacity=data.consumeInt();
+        //maxCapacity=data.consumeInt();
         test(data.consumeInt());
     }
 
@@ -25,30 +26,27 @@ public class UnConditionalWait
     public static void test(int tdata)
     {
         UnConditionalWait ucw = new UnConditionalWait();
-        Library lib = new Library();
         ucw.maxWaitingTime = tdata;
         for (int i = 0; i < maxCapacity; i++) {
-            lib.add("Book" + i);
+            Library.add("Book" + i);
         }
-        final int randomNumber = ucw.getRandomNumber(0, maxCapacity);
+        int randomNumber = ucw.getRandomNumber(0, maxCapacity);
+        Boolean bookAvailable = Library.booksHashMap.get(randomNumber).isReady();
         Thread t1 = new Thread()
         {
             @Override
             public void run()
             {
-                if (lib.booksHashMap.get(randomNumber).isReady()) {
+                if (bookAvailable) {
                     System.out.print(": Inside First Thread : \n");
-                    synchronized (lib) {
-                        try
-                        {
-                            Thread.sleep( (System.nanoTime() - System.currentTimeMillis() + maxWaitingTime) /1000000 );
-                            lib.booksHashMap.wait(maxWaitingTime);
-                        }
-                        catch (InterruptedException e)
-                        {
+                    synchronized (Library.booksHashMap) {
+                        try {
+                            Library.booksHashMap.wait(maxWaitingTime);
+                        } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        lib.checkOut(lib.getBookName(randomNumber));
+                        Library.checkOut(Library.getBookName(randomNumber));
+                        ucw.stop++;
                         System.out.print(": Order successfully purchased  : \n");
                     }
                 }
@@ -66,8 +64,9 @@ public class UnConditionalWait
             public void run()
             {
                 {
-                    synchronized (lib) {
-                        lib.checkOut(lib.getBookName(randomNumber));
+                    synchronized (Library.booksHashMap) {
+                        Library.checkOut(Library.getBookName(randomNumber));
+                        ucw.stop++;
                         System.out.print(" : Unconditional wait has successfully checked out : \n");
                     }
                 }
@@ -87,15 +86,14 @@ public class UnConditionalWait
 
 class Library
 {
-    final static HashMap<Integer, Book> booksHashMap = new HashMap<Integer, Book>();
+    final static HashMap<Integer, Book> booksHashMap = new HashMap<>();
     private static int counter = 0;
 
-    public String getBookName(int bookID) throws NullPointerException
+    public static String getBookName(int bookID)
     {
         String s = null;
         for (Book b : booksHashMap.values()) {
-            if (b.bookID != bookID) {
-            } else {
+            if (b.bookID == bookID) {
                 s = b.bookName;
             }
         }
@@ -103,11 +101,11 @@ class Library
         return s;
     }
 
-    public int getKeyOfBookName(String bookName)
+    public static int getKeyOfBookName(String bookName)
     {
         int s = -1;
         for (Book b : booksHashMap.values()) {
-            if (b.bookName.equals(bookName)) {
+            if (b.bookName == bookName) {
                 s = b.bookID;
             }
         }
@@ -115,16 +113,27 @@ class Library
         return s;
     }
 
+    public boolean getisReadyBookName(String bookName)
+    {
+        boolean s = false;
+        for (Book b : booksHashMap.values()) {
+            if (b.bookName == bookName) {
+                s = b.isBookAvailable;
+            }
+        }
 
-    public  void add(String bookName)
+        return s;
+    }
+
+    public static void add(String bookName)
     {
         int uid = counter++;
         booksHashMap.put(uid, new Book(uid, bookName));
     }
 
-synchronized public  void checkOut(String bookName) throws NullPointerException {
-        if (bookName.equals(getBookName(getKeyOfBookName(bookName))))
-        {
+    public static void checkOut(String bookName)
+    {
+        if (bookName == getBookName(getKeyOfBookName(bookName))) {
             int id = getKeyOfBookName(bookName);
             booksHashMap.get(id).isBookAvailable = false;
             booksHashMap.remove(id);
