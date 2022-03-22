@@ -1,99 +1,81 @@
 package com.example;
-import java.lang.*;
-//package com.example.Deadlock;
+
 import com.code_intelligence.jazzer.api.FuzzedDataProvider;
+
 import java.util.ArrayList;
 
-public class Deadlock
-{
-    public static int[] input= new int[4];
+public class Deadlock {
+    public static int[] input = new int[4];
 
-    public static void fuzzerTestOneInput(FuzzedDataProvider data)
-    {
+    public static void fuzzerTestOneInput(FuzzedDataProvider data) {
         for (int i = 0; i < input.length; i++)
-        InitializeIntegerArray(i,data.consumeInt());
+            InitializeIntegerArray(i, data.consumeInt());
     }
 
-    public static void InitializeIntegerArray(int index,int value)
-    {
-            input[index]=value;
-            System.out.println(input[index]);
+    public static void InitializeIntegerArray(int index, int value) {
+        input[index] = value;
+        System.out.println(input[index]);
     }
 
-    public static void main(String args[])
-    {
-	Sum sumNumbers = new Sum();
-        Sum sumSquares = new Sum();
-        //Thread threads = new ArrayList<Thread>();
-	ArrayList<Thread> threads = new ArrayList<Thread>();
-	for (int i: input)
-       {
-            if ( i % 2 == 0)
-            {
-                threads.add(new Thread()
-                {
-                    public void run()
-                    {
-                        synchronized(sumNumbers)
-                        {
+    public static void main(String args[]) {
+        final Sum sumNumbers = new Sum();
+        final Sum sumSquares = new Sum();
+        ArrayList<Thread> threads = new ArrayList<Thread>();
+        for (final int i : input) {
+            if (i % 2 == 0) {
+                threads.add(new Thread() {
+                    @Override
+                    public void run() {
+                        synchronized (sumNumbers) {
                             sumNumbers.value += i;
-                            System.out.println("a1 " + i );
-                            try
-                            {
+                            System.out.println("a1 " + i);
+                            try {
                                 Thread.sleep(100);
+                            } catch (Exception e) {
                             }
-                            catch (Exception e) {}
-                            synchronized(sumSquares)
-                            {
+                            synchronized (sumSquares) {
                                 sumSquares.value += i * i;
-                                System.out.println("a2 " + i );
+                                System.out.println("a2 " + i);
                             }
-                            System.out.println("a3 "+i+": "+sumNumbers + ", " + sumSquares );
-
+                            System.out.println("a3 " + i + ": " + sumNumbers + ", " + sumSquares);
                         }
                     }
                 });
-            }
-            else
-            {
-                threads.add(new Thread ()
-                {
-                    public void run()
-                    {
-                        synchronized(sumSquares)
-                        {
+            } else {
+                threads.add(new Thread() {
+                    @Override
+                    public void run() {
+                        synchronized (sumSquares) {
                             sumSquares.value += i * i;
-                            System.out.println("b1 " + i );
-                            try
-                            {
+                            System.out.println("b1 " + i);
+                            try {
                                 Thread.sleep(100);
+                            } catch (Exception e) {
                             }
-                            catch (Exception e) {}
-                            synchronized(sumNumbers)
-                            {
+                            synchronized (sumNumbers) {
                                 sumNumbers.value += i;
-                                System.out.println("b2 " + i );
+                                System.out.println("b2 " + i);
                             }
-                            System.out.println("b3 "+i+": "+sumNumbers + ", " + sumSquares );
+                            System.out.println("b3 " + i + ": " + sumNumbers + ", " + sumSquares);
                         }
                     }
                 });
             }
         }
 
-        for(Thread t: threads){
+        for (Thread t : threads) {
             t.start();
             System.out.println("t started");
         }
-        System.out.println(sumNumbers + "/" + sumSquares +"= something" );
+        System.out.println(sumNumbers + "/" + sumSquares + "= something");
     }
 
-    static class Sum
-    {
+    static class Sum {
         int value = 0;
-        public String toString()
-        {
-            return value+"";
+
+        @Override
+        public String toString() {
+            return value + "";
         }
     }
 }

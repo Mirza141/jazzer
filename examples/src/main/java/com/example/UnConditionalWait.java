@@ -1,51 +1,44 @@
 package com.example;
+
 import java.lang.Math;
 import java.util.HashMap;
+
 import com.code_intelligence.jazzer.api.FuzzedDataProvider;
 
-public class UnConditionalWait
-{
+public class UnConditionalWait {
     static int maxCapacity = 5000;
     static int maxWaitingTime = 10000;
     static int stop = 0;
 
-    public static void fuzzerTestOneInput(FuzzedDataProvider data)
-    {
-        maxCapacity=data.consumeInt();
+    public static void fuzzerTestOneInput(FuzzedDataProvider data) {
+        maxCapacity = data.consumeInt();
         test(data.consumeInt());
     }
 
-    public static void main(String args[])
-    {
-        for (; stop < 2;) {
+    public static void main(String args[]) {
+        for (; stop < 2; ) {
             test(5);
         }
     }
 
-    public static void test(int tdata)
-    {
+    public static void test(int tdata) {
         UnConditionalWait ucw = new UnConditionalWait();
-        Library lib = new Library();
+        final Library lib = new Library();
         ucw.maxWaitingTime = tdata;
         for (int i = 0; i < maxCapacity; i++) {
             lib.add("Book" + i);
         }
         final int randomNumber = ucw.getRandomNumber(0, maxCapacity);
-        Thread t1 = new Thread()
-        {
+        Thread t1 = new Thread() {
             @Override
-            public void run()
-            {
+            public void run() {
                 if (lib.booksHashMap.get(randomNumber).isReady()) {
                     System.out.print(": Inside First Thread : \n");
                     synchronized (lib) {
-                        try
-                        {
-                            Thread.sleep( (System.nanoTime() - System.currentTimeMillis() + maxWaitingTime) /1000000 );
+                        try {
+                            Thread.sleep((System.nanoTime() - System.currentTimeMillis() + maxWaitingTime) / 1000000);
                             lib.booksHashMap.wait(maxWaitingTime);
-                        }
-                        catch (InterruptedException e)
-                        {
+                        } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                         lib.checkOut(lib.getBookName(randomNumber));
@@ -56,15 +49,13 @@ public class UnConditionalWait
             }
         };
 
-        Thread t2 = new Thread()
-        {
+        Thread t2 = new Thread() {
             {
                 System.out.print(": Inside Second thread : \n");
             }
 
             @Override
-            public void run()
-            {
+            public void run() {
                 {
                     synchronized (lib) {
                         lib.checkOut(lib.getBookName(randomNumber));
@@ -78,20 +69,17 @@ public class UnConditionalWait
         t2.start();
     }
 
-    public int getRandomNumber(int min, int max)
-    {
-        return (int)(Math.random()*(max-min+1)+min);
+    public int getRandomNumber(int min, int max) {
+        return (int) (Math.random() * (max - min + 1) + min);
     }
 
 }
 
-class Library
-{
+class Library {
     final static HashMap<Integer, Book> booksHashMap = new HashMap<Integer, Book>();
     private static int counter = 0;
 
-    public String getBookName(int bookID) throws NullPointerException
-    {
+    public String getBookName(int bookID) throws NullPointerException {
         String s = null;
         for (Book b : booksHashMap.values()) {
             if (b.bookID != bookID) {
@@ -103,8 +91,7 @@ class Library
         return s;
     }
 
-    public int getKeyOfBookName(String bookName)
-    {
+    public int getKeyOfBookName(String bookName) {
         int s = -1;
         for (Book b : booksHashMap.values()) {
             if (b.bookName.equals(bookName)) {
@@ -116,15 +103,13 @@ class Library
     }
 
 
-    public  void add(String bookName)
-    {
+    public void add(String bookName) {
         int uid = counter++;
         booksHashMap.put(uid, new Book(uid, bookName));
     }
 
-synchronized public  void checkOut(String bookName) throws NullPointerException {
-        if (bookName.equals(getBookName(getKeyOfBookName(bookName))))
-        {
+    synchronized public void checkOut(String bookName) throws NullPointerException {
+        if (bookName.equals(getBookName(getKeyOfBookName(bookName)))) {
             int id = getKeyOfBookName(bookName);
             booksHashMap.get(id).isBookAvailable = false;
             booksHashMap.remove(id);
@@ -134,21 +119,18 @@ synchronized public  void checkOut(String bookName) throws NullPointerException 
 
 }
 
-class Book
-{
+class Book {
     public String bookName;
     public Boolean isBookAvailable = false;
     public int bookID;
 
-    public Book(int id, String title)
-    {
+    public Book(int id, String title) {
         bookName = title;
         bookID = id;
         isBookAvailable = true;
     }
 
-    public Boolean isReady()
-    {
+    public Boolean isReady() {
         return isBookAvailable;
     }
 
