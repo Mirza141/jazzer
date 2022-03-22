@@ -27,6 +27,15 @@ java_fuzz_target_test(
     target_class = "com.example.ExampleFuzzer",
 )
 
+java_fuzz_target_test(
+    name = "Deadlock",
+    srcs = [
+        "src/main/java/com/example/Deadlock.java",
+    ],
+    # Comment out the next line to keep the fuzzer running indefinitely.
+    target_class = ["com.example.Deadlock"],
+)
+
 java_jni_library(
     name = "example_fuzzer_with_native_lib",
     srcs = [
