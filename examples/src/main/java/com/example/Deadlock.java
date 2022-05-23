@@ -1,5 +1,7 @@
 package com.example;
-
+import java.io.IOException;
+import jdk.test.lib.process.OutputAnalyzer;
+import jdk.test.lib.process.ProcessTools;
 import com.code_intelligence.jazzer.api.FuzzedDataProvider;
 
 import java.util.ArrayList;
@@ -8,8 +10,10 @@ public class Deadlock {
     public static int[] input = new int[4];
 
     public static void fuzzerTestOneInput(FuzzedDataProvider data) {
-        for (int i = 0; i < input.length; i++)
+        for (int i = 0; i < input.length; i++) {
             InitializeIntegerArray(i, data.consumeInt());
+            
+        }
     }
 
     public static void InitializeIntegerArray(int index, int value) {

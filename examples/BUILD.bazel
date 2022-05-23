@@ -33,7 +33,7 @@ java_fuzz_target_test(
         "src/main/java/com/example/Deadlock.java",
     ],
     # Comment out the next line to keep the fuzzer running indefinitely.
-    target_class = ["com.example.Deadlock"],
+    target_class = "com.example.Deadlock",
 )
 
 java_jni_library(
