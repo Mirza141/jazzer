@@ -1,11 +1,11 @@
-package com.example;
-
+package com.example.benchmarks;
 import java.util.HashMap;
-
 import com.code_intelligence.jazzer.api.FuzzedDataProvider;
 
 class Database {
     final static int N = 128;
+    private final HashMap<Integer, Entry> entries = new HashMap<Integer, Entry>();
+    private int counter = 0;
 
     public static void main(String[] args) {
         test(0, 1);
@@ -20,29 +20,22 @@ class Database {
         for (int i = 0; i < N; i++) {
             db.add(i);
         }
-
         Thread t1 = new Thread() {
             @Override
             public void run() {
                 db.replace(a, 2 * N);
             }
         };
-
         Thread t2 = new Thread() {
             @Override
             public void run() {
                 db.replace(b, 3 * N);
             }
         };
-
         t1.start();
         t2.start();
-
         db.getId(2 * N);
     }
-
-    private final HashMap<Integer, Entry> entries = new HashMap<Integer, Entry>();
-    private int counter = 0;
 
     public void add(int value) {
         int id = counter++;

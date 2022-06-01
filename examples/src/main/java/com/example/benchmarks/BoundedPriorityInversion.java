@@ -1,31 +1,30 @@
+package com.example.benchmarks;
+import com.code_intelligence.jazzer.api.FuzzedDataProvider;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class BoundedPriorityInversion {
-    static ReentrantLock lock = new ReentrantLock();
-
     public static void main(String[] args) {
-        test();
+        test(1, 2, 3);
     }
-
-    public static void test() {
-        Thread threadA = new Thread(() ->
-        {
-            System.out.println("Doing something in first thread");
+    public static void fuzzerTestOneInput(FuzzedDataProvider data) {
+        test(data.consumeInteger(), data.consumeInteger(), data.consumeInteger());
+    }
+    public static void test(final int a, final int b, final int c) {
+        ReentrantLock lock = new ReentrantLock();
+        final int[] i = new int[1];
+        Thread threadA = new Thread(() -> {
+            i[0] = b + c;
             if (lock.tryLock()) {
-                System.out.println("first thread which has the low priority is entered in critical section");
-                processing(13000);
+                i[0] = b - c;
+                processing(4000);
             }
         });
-
-        Thread threadB = new Thread(() ->
-        {
-            System.out.println("Doing something in Second thread");
-            processing(3000);
+        Thread threadB = new Thread(() -> {
+            i[0] = c + a;
+            processing(2000);
             if (lock.tryLock()) {
-                System.out.println("second thread which has the highest priority is entered in critical section after low priority task");
-                processing(5000);
-            } else {
-                System.out.println("First thread is holding the lock although it has low priority");
+                i[0] = c - a;
+                processing(3000);
             }
         });
         threadA.setPriority(Thread.MIN_PRIORITY);

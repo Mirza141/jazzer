@@ -1,19 +1,19 @@
-package com.example;
-import java.io.IOException;
-import jdk.test.lib.process.OutputAnalyzer;
-import jdk.test.lib.process.ProcessTools;
+package com.example.benchmarks;
 import com.code_intelligence.jazzer.api.FuzzedDataProvider;
-
 import java.util.ArrayList;
 
 public class Deadlock {
     public static int[] input = new int[4];
 
+    public static void main(String[] args) {
+        test(new Sum(),new Sum());
+    }
+
     public static void fuzzerTestOneInput(FuzzedDataProvider data) {
         for (int i = 0; i < input.length; i++) {
             InitializeIntegerArray(i, data.consumeInt());
-            
         }
+        test(new Sum(),new Sum());
     }
 
     public static void InitializeIntegerArray(int index, int value) {
@@ -21,9 +21,7 @@ public class Deadlock {
         System.out.println(input[index]);
     }
 
-    public static void main(String args[]) {
-        final Sum sumNumbers = new Sum();
-        final Sum sumSquares = new Sum();
+    public static void test(final Sum sumNumbers, final Sum sumSquares) {
         ArrayList<Thread> threads = new ArrayList<Thread>();
         for (final int i : input) {
             if (i % 2 == 0) {

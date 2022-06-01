@@ -1,45 +1,38 @@
+package com.example.benchmarks;
+import com.code_intelligence.jazzer.api.FuzzedDataProvider;
+
 public class AtomicityViolation {
-  static int y = 0;
-  static int a = -1;
-  static int x = -1;
-  //Main Function
-  public static void main(String[] args) {
-    test();
-  }
 
-  //FuzzerTestOneInput for randomized inputs
-  /*public static void fuzzerTestOneInput(FuzzedDataProvider data)
-  {
-
-  }*/
-
-  //Bug type under test
-  public static void test() {
-    Thread firstThread = new Thread(() -> {
-      y = calculate();
-      sleep(3000);
-
-    });
-
-    Thread secondThread = new Thread(() -> {
-
-      a = x / y;
-    });
-
-    firstThread.start();
-    secondThread.start();
-  }
-
-  private static int calculate() {
-    return y + y;
-  }
-
-  private static void sleep(int delay) {
-    try {
-      Thread.sleep(delay);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
+    public static void main(String[] args) {
+        test(2, 1);
     }
-  }
 
+    public static void fuzzerTestOneInput(FuzzedDataProvider data) {
+        test(data.consumeInteger(), data.consumeInteger());
+    }
+
+    public static void test(final int x, final int y) {
+        final int[] temp = new int[1];
+        Thread firstThread = new Thread(() -> {
+            temp[0] = calculate(y);
+            processing(3000);
+        });
+        Thread secondThread = new Thread(() -> {
+            temp[0] = x / y;
+        });
+        firstThread.start();
+        secondThread.start();
+    }
+
+    private static int calculate(int y) {
+        return y + y;
+    }
+
+    private static void processing(int delay) {
+        try {
+            Thread.sleep(delay);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 }

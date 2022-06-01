@@ -3,7 +3,7 @@
   <component name="MavenCustomPomFilePath">
     <option name="mavenPomFileUrl" value="file://$MODULE_DIR$/jazzer-api.pom" />
   </component>
-  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_5">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_10">
     <output url="file://$MODULE_DIR$/target/classes" />
     <output-test url="file://$MODULE_DIR$/target/test-classes" />
     <content url="file://$MODULE_DIR$">

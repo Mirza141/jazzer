@@ -1,67 +1,50 @@
-package com.company;
+package com.example.benchmarks;
+import com.code_intelligence.jazzer.api.FuzzedDataProvider;
 
-public class OrderViolation
-{
-    static boolean isScanned=false;
-    static OrderViolation oV= new OrderViolation();
-    //Main Function
-    public static void main(String[] args)
-    {
-        test(oV);
+public class OrderViolation {
+    static boolean isScanned = false;
+
+    public static void main(String[] args) {
+        test(new OrderViolation());
     }
 
-    //FuzzerTestOneInput for randomized inputs
-  /*public static void fuzzerTestOneInput(FuzzedDataProvider data)
-  {
-
-  }*/
-
-    //Bug type under test
-    public static void test(OrderViolation oV)
-    {
+    public static void fuzzerTestOneInput(FuzzedDataProvider data) {
+        OrderViolation oV=new OrderViolation();
+        if (data.consumeInt() % 2 == 0)
+        {
+            oV.isScanned=false;
+        }
+        else
+        {
+            oV.isScanned=true;
+        }
+        test(oV);
+    }
+    public static void test(OrderViolation oV) {
         Thread firstThread = new Thread(() ->
         {
-            synchronized (oV)
-            {
+            synchronized (oV) {
                 oV.scan();
             }
 
         });
-
         Thread secondThread = new Thread(() ->
         {
-            synchronized (oV)
-            {
+            synchronized (oV) {
                 oV.print();
             }
         });
-
         firstThread.start();
         secondThread.start();
     }
-
-    private static void scan()
-    {
-        isScanned=true;
+    private static void scan() {
+        isScanned = true;
     }
-    private static void print()
-    {
-        if(isScanned)
-        {
+    private static void print() {
+        if (isScanned) {
             System.out.println("printed");
-        }
-        else
-        {
+        } else {
             System.out.println("Please scan first");
         }
     }
-
-    private static void sleep(int delay) {
-        try {
-            Thread.sleep(delay);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
 }

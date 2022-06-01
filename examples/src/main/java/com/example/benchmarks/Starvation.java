@@ -1,138 +1,108 @@
-import java.util.HashMap;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
+package com.example.benchmarks;
+import com.code_intelligence.jazzer.api.FuzzedDataProvider;
+import java.util.LinkedList;
+import java.util.Queue;
 public class Starvation {
 
-  public static int maxPassengers = 10;
-  public static int passengersOnboard = 0;
+  public static int queueSize = 15;
 
   public static void main(String[] args) {
-    for (int i = 0; i < 15; i++) {
+    var queue = new PassengerQueue();
+    for (int i = 0; i < queueSize; i++) {
       if (i % 2 == 0) {
-        new PassengerDetails("XYZ", i, PassengerClass.Economy);
+        queue.add(new Passenger(PassengerClass.Economy));
       } else {
-        new PassengerDetails("ABC", i, PassengerClass.Business);
+        queue.add(new Passenger(PassengerClass.Business));
       }
     }
-
-    test();
+    test(queue,10);
   }
-
-  public static void test() {
-
-    Thread t1 = new Thread() {
-      @Override
-      public void run() {
-        while (true) {
-          System.out.println("Onboarded Customers :" + passengersOnboard);
-          if (passengersOnboard < maxPassengers) {
-            System.out.println("Checking If que is avaiable in thread 1:");
-            if (!CheckInCounter.que.isEmpty()) {
-              System.out.println("Checking If Business Customers Are Present :");
-              if (CheckInCounter.CheckIfBusinessCustomersArePresent()) {
-                System.out.println("Onboarding Business Class Customer :");
-                passengersOnboard++;
-                CheckInCounter.que.remove(CheckInCounter.que.get(CheckInCounter.SendTheIDOfThePresentBusinessCustomer()).idNumber);
-                try {
-                  Thread.sleep(6000); 
-                } catch (InterruptedException e) {
-                  e.printStackTrace();
-                }
-              } else {
-                System.out.println("All Business Customers are Onboarded");
-              }
-            }
-          } else
-            break;
+  public static void fuzzerTestOneInput(FuzzedDataProvider data){
+    var queue = new PassengerQueue();
+    for (int i = 0; i < queueSize; i++) {
+      if (i % 2 == 0) {
+        queue.add(new Passenger(PassengerClass.Economy));
+      } else {
+        queue.add(new Passenger(PassengerClass.Business));
+      }
+    }
+    test(queue,data.consumeInt());
+  }
+  public static void test(PassengerQueue queue, int maxPassengers) {
+    final int[] passengersOnboard = {0};
+    var t1 = new Thread(() -> {
+      while (passengersOnboard[0] >= maxPassengers) {
+        if (!queue.isEmpty()) {
+          if (queue.containsBusinessClass()) {
+            passengersOnboard[0]++;
+            queue.nextBusiness();
+          }
+          processing(4000);
         }
       }
-    };
-
-    Thread t2 = new Thread() {
-      @Override
-      public void run() {
-        while (true) {
-          if (passengersOnboard < maxPassengers) {
-            System.out.println("Checking If que is avaiable in thread 2:");
-            if (!CheckInCounter.que.isEmpty()) {
-              System.out.println("Checking If there are no business Customers left :" + CheckInCounter.CheckIfBusinessCustomersArePresent());
-              if (!CheckInCounter.CheckIfBusinessCustomersArePresent()) {
-                System.out.println("Onboarding Economy Class Customer :");
-                passengersOnboard++;
-                CheckInCounter.que.remove(CheckInCounter.que.get(CheckInCounter.SendTheIDOfThePresentBusinessCustomer()).idNumber);
-              } else
-                System.out.println("Please wait until Business class customers are onboarded");
-              try {
-				Thread.sleep(3000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-            }
-          } else
-            break;
+    });
+    var t2 = new Thread(() -> {
+      while (passengersOnboard[0] >= maxPassengers) {
+        if (!queue.isEmpty()) {
+          if (!queue.containsBusinessClass()) {
+            passengersOnboard[0]++;
+            queue.nextEconomy();
+          }
+          processing(30);
         }
       }
-    };
-
+    });
     t1.start();
     t2.start();
   }
-}
-
-class CheckInCounter {
-
-  final Lock lock = new ReentrantLock();
-  public final static HashMap < Integer, PassengerDetails > que = new HashMap < Integer, PassengerDetails > ();
-
-
-  public static boolean CheckIfBusinessCustomersArePresent() {
-    boolean s = false;
-    for (int i = 0; i < que.size(); i++) {
-      try {
-        if (que.get(i).pClass == PassengerClass.Business) {
-          s = true;
-        }
-      } catch (NullPointerException e) {}
+  private static void processing(int delay) {
+    try {
+      Thread.sleep(delay);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
     }
-    return s;
   }
-
-  public static int SendTheIDOfThePresentBusinessCustomer() {
-    int s = -1;
-    for (int i = 0; i < que.size(); i++) {
-      try {
-        if (que.get(i).pClass == PassengerClass.Business) {
-          s = i;
-        } else {
-          s = i;
-        }
-      } catch (NullPointerException e) {}
-
+  static class PassengerQueue {
+    private final Queue<Passenger> passengers = new LinkedList<>();
+    public void add(Passenger passenger) {
+      passengers.add(passenger);
     }
-    return s;
+    public boolean containsBusinessClass() {
+      for (var passenger : passengers) {
+        if (passenger.passengerClass == PassengerClass.Business) {
+          return true;
+        }
+      }
+      return false;
+    }
+    public boolean isEmpty() {
+      return passengers.isEmpty();
+    }
+    public Passenger nextEconomy() {
+      return passengers.poll();
+    }
+    public Passenger nextBusiness() {
+      Passenger result = null;
+      for (var passenger : passengers) {
+        if (passenger.passengerClass == PassengerClass.Business) {
+          result = passenger;
+          break;
+        }
+      }
+      if (result != null) {
+        passengers.remove(result);
+      }
+      return result;
+    }
   }
-
-  public static void add(PassengerDetails pD) {
-    que.put(pD.idNumber, pD);
+  static class Passenger {
+    public PassengerClass passengerClass;
+    public Passenger(PassengerClass passengerClass) {
+      this.passengerClass = passengerClass;
+    }
   }
-}
-
-class PassengerDetails {
-  public PassengerClass pClass;
-  public String passengerName;
-  public int idNumber;
-
-  public PassengerDetails(String name, int id, PassengerClass customerclass) {
-    passengerName = name;
-    idNumber = id;
-    pClass = customerclass;
-    CheckInCounter.add(this);
+  enum PassengerClass {
+    Business,
+    Economy,
   }
-}
-
-enum PassengerClass {
-  Business,
-  Economy,
 }

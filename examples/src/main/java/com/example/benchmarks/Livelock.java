@@ -1,33 +1,26 @@
-package com.example;
+package com.example.benchmarks;
 import com.code_intelligence.jazzer.api.FuzzedDataProvider;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-public class Livelock
-{
 
-    static final BankAccount studentAccount = new BankAccount(101, 50000);
-    static final BankAccount universityAccount = new BankAccount(102, 100000);
+public class Livelock {
+
     public static void main(String[] args) {
-        test();
+        test(new BankAccount(101, 50000),new BankAccount(102, 100000));
     }
 
-    public static void fuzzerTestOneInput(FuzzedDataProvider data)
-    {
-
+    public static void fuzzerTestOneInput(FuzzedDataProvider data) {
+        test(new BankAccount(data.consumeInteger(), data.consumeInteger()),new BankAccount(data.consumeInteger(), data.consumeInteger()));
     }
 
-    public static void test()
-    {
+    public static void test(final BankAccount studentAccount, final BankAccount universityAccount) {
         Thread t1 = new Thread() {
             @Override
             public void run() {
                 while (true) {
                     try {
-                        if (studentAccount.transaction(studentAccount, universityAccount, 4000)) {
-
-                        }
+                        studentAccount.transaction(studentAccount, universityAccount, 4000);
                     } catch (InterruptedException e) {
-                        // TODO: handle exception
                         e.printStackTrace();
                     }
                 }
@@ -39,83 +32,66 @@ public class Livelock
             public void run() {
                 while (true) {
                     try {
-                        if (universityAccount.transaction(universityAccount, studentAccount, 2000)) {
-
-                        }
+                        universityAccount.transaction(universityAccount, studentAccount, 2000);
                     } catch (InterruptedException e) {
-                        // TODO: handle exception
                         e.printStackTrace();
                     }
                 }
             }
         };
-
         t1.start();
         t2.start();
     }
-}
+    static class BankAccount {
+        final Lock lock = new ReentrantLock();
+        private double balance;
+        private int accountNumber;
 
-
-class BankAccount {
-    private double balance;
-    private int accountNumber;
-    final Lock lock = new ReentrantLock();
-
-    public BankAccount(int AccountNumber, double InitialBalance) {
-        setBalance(InitialBalance);
-        setAccountNumber(AccountNumber);
-    }
-
-    public boolean deposit(double amount) throws InterruptedException {
-        if (this.lock.tryLock()) {
-            Thread.sleep(1000);
-            balance = balance + amount;
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public boolean withdraw(double amount) throws InterruptedException {
-        if (this.lock.tryLock()) {
-            Thread.sleep(1000);
-            balance = balance - amount;
-            return true;
-        } else {
-            return false;
+        public BankAccount(int AccountNumber, double InitialBalance) {
+            setBalance(InitialBalance);
+            setAccountNumber(AccountNumber);
         }
 
-    }
-
-    public boolean transaction(BankAccount from, BankAccount to, double amount) throws InterruptedException {
-        if (from.withdraw(amount)) {
-            System.out.println("Withdrawing " + amount + " from " + accountNumber);
-
-            if (from.deposit(amount)) {
-                System.out.println("Depositing " + amount + " to " + accountNumber);
+        public boolean deposit(double amount) throws InterruptedException {
+            if (this.lock.tryLock()) {
+                Thread.sleep(1000);
+                balance = balance + amount;
                 return true;
             } else {
-                from.deposit(amount);
-                System.out.println("Refunding amount: " + amount + " to account: " + from.accountNumber);
+                return false;
             }
         }
 
-        return false;
-    }
+        public boolean withdraw(double amount) throws InterruptedException {
+            if (this.lock.tryLock()) {
+                Thread.sleep(1000);
+                balance = balance - amount;
+                return true;
+            } else {
+                return false;
+            }
+        }
 
-    public int getAccountNumber() {
-        return accountNumber;
-    }
+        public boolean transaction(BankAccount from, BankAccount to, double amount) throws InterruptedException {
+            if (from.withdraw(amount)) {
+                System.out.println("Withdrawing " + amount + " from " + accountNumber);
+                if (from.deposit(amount)) {
+                    System.out.println("Depositing " + amount + " to " + accountNumber);
+                    return true;
+                } else {
+                    from.deposit(amount);
+                    System.out.println("Refunding amount: " + amount + " to account: " + from.accountNumber);
+                }
+            }
+            return false;
+        }
 
-    public void setAccountNumber(int accountNumber) {
-        this.accountNumber = accountNumber;
-    }
+        public void setAccountNumber(int accountNumber) {
+            this.accountNumber = accountNumber;
+        }
 
-    public double getBalance() {
-        return balance;
-    }
-
-    public void setBalance(double balance) {
-        this.balance = balance;
+        public void setBalance(double balance) {
+            this.balance = balance;
+        }
     }
 }
