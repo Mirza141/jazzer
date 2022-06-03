@@ -1,8 +1,6 @@
-package com.example;
-
+package com.example.benchmarks;
 import java.lang.Math;
 import java.util.HashMap;
-
 import com.code_intelligence.jazzer.api.FuzzedDataProvider;
 
 public class UnConditionalWait {
