@@ -17,8 +17,8 @@ class Database {
 
     public static void test(final int a, final int b) {
         final Database db = new Database();
-        for (int i = 0; i < N; i++) {
-            db.add(i);
+        for (int id = 0; id < N; id++) {
+            db.add(id);
         }
         Thread t1 = new Thread() {
             @Override

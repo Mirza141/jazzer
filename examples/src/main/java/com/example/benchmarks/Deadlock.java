@@ -3,25 +3,24 @@ import com.code_intelligence.jazzer.api.FuzzedDataProvider;
 import java.util.ArrayList;
 
 public class Deadlock {
-    public static int[] input = new int[4];
 
     public static void main(String[] args) {
-        test(new Sum(),new Sum());
+        test(new Sum(),new Sum(),initializeArray(1));
     }
 
     public static void fuzzerTestOneInput(FuzzedDataProvider data) {
+        test(new Sum(),new Sum(),initializeArray(data.consumeInt()));
+    }
+
+    public static int[] initializeArray(int value) {
+        int[] input = new int[4];
         for (int i = 0; i < input.length; i++) {
-            InitializeIntegerArray(i, data.consumeInt());
+            input[i] = value+i;
         }
-        test(new Sum(),new Sum());
+        return input;
     }
 
-    public static void InitializeIntegerArray(int index, int value) {
-        input[index] = value;
-        System.out.println(input[index]);
-    }
-
-    public static void test(final Sum sumNumbers, final Sum sumSquares) {
+    public static void test(final Sum sumNumbers, final Sum sumSquares, int [] input) {
         ArrayList<Thread> threads = new ArrayList<Thread>();
         for (final int i : input) {
             if (i % 2 == 0) {
@@ -30,16 +29,10 @@ public class Deadlock {
                     public void run() {
                         synchronized (sumNumbers) {
                             sumNumbers.value += i;
-                            System.out.println("a1 " + i);
-                            try {
-                                Thread.sleep(100);
-                            } catch (Exception e) {
-                            }
+                            delay(100);
                             synchronized (sumSquares) {
                                 sumSquares.value += i * i;
-                                System.out.println("a2 " + i);
                             }
-                            System.out.println("a3 " + i + ": " + sumNumbers + ", " + sumSquares);
                         }
                     }
                 });
@@ -49,16 +42,10 @@ public class Deadlock {
                     public void run() {
                         synchronized (sumSquares) {
                             sumSquares.value += i * i;
-                            System.out.println("b1 " + i);
-                            try {
-                                Thread.sleep(100);
-                            } catch (Exception e) {
-                            }
+                            delay(100);
                             synchronized (sumNumbers) {
                                 sumNumbers.value += i;
-                                System.out.println("b2 " + i);
                             }
-                            System.out.println("b3 " + i + ": " + sumNumbers + ", " + sumSquares);
                         }
                     }
                 });
@@ -67,9 +54,16 @@ public class Deadlock {
 
         for (Thread t : threads) {
             t.start();
-            System.out.println("t started");
         }
         System.out.println(sumNumbers + "/" + sumSquares + "= something");
+    }
+
+    private static void delay(int delay) {
+        try {
+            Thread.sleep(delay);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     static class Sum {

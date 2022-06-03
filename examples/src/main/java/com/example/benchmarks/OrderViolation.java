@@ -10,14 +10,8 @@ public class OrderViolation {
 
     public static void fuzzerTestOneInput(FuzzedDataProvider data) {
         OrderViolation oV=new OrderViolation();
-        if (data.consumeInt() % 2 == 0)
-        {
-            oV.isScanned=false;
-        }
-        else
-        {
-            oV.isScanned=true;
-        }
+        if (data.consumeInt() % 2 == 0) { oV.isScanned=false; }
+        else { oV.isScanned=true; }
         test(oV);
     }
     public static void test(OrderViolation oV) {
@@ -26,7 +20,6 @@ public class OrderViolation {
             synchronized (oV) {
                 oV.scan();
             }
-
         });
         Thread secondThread = new Thread(() ->
         {
@@ -41,10 +34,7 @@ public class OrderViolation {
         isScanned = true;
     }
     private static void print() {
-        if (isScanned) {
-            System.out.println("printed");
-        } else {
-            System.out.println("Please scan first");
-        }
+        if (isScanned) { System.out.println("printed"); }
+        else { System.out.println("Please scan first"); }
     }
 }

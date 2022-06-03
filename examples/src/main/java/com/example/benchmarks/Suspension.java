@@ -23,23 +23,15 @@ public class Suspension {
   }
   public static void test(InventoryControl inventory) {
     Thread firstAssociate = new Thread(() -> {
-      try {
         check(inventory,"First");
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
     });
     Thread secondAssociate = new Thread(() -> {
-      try {
-        check(inventory,"Second");
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
+      check(inventory,"Second");
     });
     firstAssociate.start();
     secondAssociate.start();
   }
-  public static void check(InventoryControl inventory, String threadName) throws InterruptedException {
+  public static void check(InventoryControl inventory, String threadName)  {
     synchronized(inventory) {
       inventory.reduceQunatityOnHand();
       System.out.println(threadName+" Associate is getting rid of items");
@@ -57,7 +49,7 @@ public class Suspension {
     public void addInventory(int itemNumber) {
       inventory.add(itemNumber);
     }
-    public void reduceQunatityOnHand() throws InterruptedException {
+    public void reduceQunatityOnHand()  {
       while (!inventory.isEmpty()) {
           inventory.remove();
       }

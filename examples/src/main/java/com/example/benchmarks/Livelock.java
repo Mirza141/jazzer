@@ -15,32 +15,35 @@ public class Livelock {
 
     public static void test(final BankAccount studentAccount, final BankAccount universityAccount) {
         Thread t1 = new Thread() {
+            int i=0, max=10;
             @Override
             public void run() {
-                while (true) {
-                    try {
-                        studentAccount.transaction(studentAccount, universityAccount, 4000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
+                do {
+                    studentAccount.transaction(studentAccount, universityAccount, 4000);
+                    i++;
+                }while(i<max);
             }
         };
 
         Thread t2 = new Thread() {
+            int i=0,max=10;
             @Override
             public void run() {
-                while (true) {
-                    try {
-                        universityAccount.transaction(universityAccount, studentAccount, 2000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
+                do {
+                    universityAccount.transaction(universityAccount, studentAccount, 2000);
+                    i++;
+                }while(i<max);
             }
         };
         t1.start();
         t2.start();
+    }
+    private static void delay(int delay) {
+        try {
+            Thread.sleep(delay);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
     static class BankAccount {
         final Lock lock = new ReentrantLock();
@@ -52,9 +55,9 @@ public class Livelock {
             setAccountNumber(AccountNumber);
         }
 
-        public boolean deposit(double amount) throws InterruptedException {
+        public boolean deposit(double amount) {
             if (this.lock.tryLock()) {
-                Thread.sleep(1000);
+                delay(1000);
                 balance = balance + amount;
                 return true;
             } else {
@@ -62,9 +65,9 @@ public class Livelock {
             }
         }
 
-        public boolean withdraw(double amount) throws InterruptedException {
+        public boolean withdraw(double amount)  {
             if (this.lock.tryLock()) {
-                Thread.sleep(1000);
+                delay(1000);
                 balance = balance - amount;
                 return true;
             } else {
@@ -72,7 +75,7 @@ public class Livelock {
             }
         }
 
-        public boolean transaction(BankAccount from, BankAccount to, double amount) throws InterruptedException {
+        public boolean transaction(BankAccount from, BankAccount to, double amount) {
             if (from.withdraw(amount)) {
                 System.out.println("Withdrawing " + amount + " from " + accountNumber);
                 if (from.deposit(amount)) {

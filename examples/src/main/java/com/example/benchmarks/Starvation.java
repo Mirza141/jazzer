@@ -7,18 +7,11 @@ public class Starvation {
   public static int queueSize = 15;
 
   public static void main(String[] args) {
-    var queue = new PassengerQueue();
-    for (int i = 0; i < queueSize; i++) {
-      if (i % 2 == 0) {
-        queue.add(new Passenger(PassengerClass.Economy));
-      } else {
-        queue.add(new Passenger(PassengerClass.Business));
-      }
-    }
+    EnquePassenger(new PassengerQueue());
     test(queue,10);
   }
-  public static void fuzzerTestOneInput(FuzzedDataProvider data){
-    var queue = new PassengerQueue();
+  public static void EnquePassenger(PassengerQueue queue)
+  {
     for (int i = 0; i < queueSize; i++) {
       if (i % 2 == 0) {
         queue.add(new Passenger(PassengerClass.Economy));
@@ -26,6 +19,9 @@ public class Starvation {
         queue.add(new Passenger(PassengerClass.Business));
       }
     }
+  }
+  public static void fuzzerTestOneInput(FuzzedDataProvider data){
+    EnquePassenger(new PassengerQueue());
     test(queue,data.consumeInt());
   }
   public static void test(PassengerQueue queue, int maxPassengers) {

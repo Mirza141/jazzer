@@ -1,4 +1,4 @@
-package com.example.benchmarks;
+package com.example;
 import com.code_intelligence.jazzer.api.FuzzedDataProvider;
 
 public class AtomicityViolation {
@@ -15,20 +15,24 @@ public class AtomicityViolation {
         final int[] temp = new int[1];
         Thread firstThread = new Thread(() -> {
             temp[0] = calculate(y);
-            processing(3000);
         });
         Thread secondThread = new Thread(() -> {
-            temp[0] = x / y;
+            temp[0] = x * y;
         });
         firstThread.start();
         secondThread.start();
     }
 
     private static int calculate(int y) {
-        return y + y;
+        for (int i=0;i<y;i++)
+        {
+            y++;
+        }
+        delay(30);
+        return y;
     }
 
-    private static void processing(int delay) {
+    private static void delay(int delay) {
         try {
             Thread.sleep(delay);
         } catch (InterruptedException e) {
