@@ -4,7 +4,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class BoundedPriorityInversion {
     public static void main(String[] args) {
-        test(new BoundedPriorityInversion());
+        test(new BoundedPriorityInversion(),10);
     }
 
     public static void fuzzerTestOneInput(FuzzedDataProvider data) {
