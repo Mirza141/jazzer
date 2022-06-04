@@ -34,7 +34,7 @@ class Database {
         };
         t1.start();
         t2.start();
-        db.getId(2 * N);
+        //db.getId(2 * N);
     }
 
     public void add(int value) {

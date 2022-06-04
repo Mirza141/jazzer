@@ -15,24 +15,24 @@ public class Livelock {
 
     public static void test(final BankAccount studentAccount, final BankAccount universityAccount) {
         Thread t1 = new Thread() {
-            int i=0, max=10;
+            //int i=0, max=10;
             @Override
             public void run() {
-                do {
+                //do {
                     studentAccount.transaction(studentAccount, universityAccount, 4000);
-                    i++;
-                }while(i<max);
+                  //  i++;
+                //}while(i<max);
             }
         };
 
         Thread t2 = new Thread() {
-            int i=0,max=10;
+            //int i=0,max=10;
             @Override
             public void run() {
-                do {
+                //do {
                     universityAccount.transaction(universityAccount, studentAccount, 2000);
-                    i++;
-                }while(i<max);
+                  //  i++;
+                //}while(i<max);
             }
         };
         t1.start();
