@@ -2,7 +2,7 @@ package com.example.benchmarks;
 import com.code_intelligence.jazzer.api.FuzzedDataProvider;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class BoundedPriorityInversion { // adapt with order violation
+public class BoundedPriorityInversion {
     static boolean isScanned = false;
     public static void main(String[] args) {
         test(new BoundedPriorityInversion());
@@ -44,7 +44,6 @@ public class BoundedPriorityInversion { // adapt with order violation
         if (isScanned) { System.out.println("$"); }
         else { System.out.println("%"); }
     }
-
     private static void processing(int time) {
         try {
             Thread.sleep(time);

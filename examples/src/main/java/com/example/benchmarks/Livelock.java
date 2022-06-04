@@ -10,7 +10,7 @@ public class Livelock {
     }
 
     public static void fuzzerTestOneInput(FuzzedDataProvider data) {
-        test(new BankAccount(data.consumeInteger(), data.consumeInteger()),new BankAccount(data.consumeInteger(), data.consumeInteger()));
+        test(new BankAccount(data.consumeInt(), data.consumeInt()),new BankAccount(data.consumeInt(), data.consumeInt()));
     }
 
     public static void test(final BankAccount studentAccount, final BankAccount universityAccount) {

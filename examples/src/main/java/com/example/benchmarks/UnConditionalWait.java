@@ -25,6 +25,7 @@ public class UnConditionalWait {
     }
 
     synchronized void printingPages(int pages) {
+        System.out.println("$");
         if (this.noOfPaper < pages) {
             try {
                 wait();
@@ -34,6 +35,7 @@ public class UnConditionalWait {
     }
 
     synchronized void addPages(int noOfPages) {
+        System.out.println("%");
         this.noOfPaper += noOfPages;
         notify();
     }

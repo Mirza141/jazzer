@@ -12,7 +12,7 @@ class Database {
     }
 
     public static void fuzzerTestOneInput(FuzzedDataProvider data) {
-        test(data.consumeInteger() % N, data.consumeInteger() % N);
+        test(data.consumeInt() % N, data.consumeInt() % N);
     }
 
     public static void test(final int a, final int b) {

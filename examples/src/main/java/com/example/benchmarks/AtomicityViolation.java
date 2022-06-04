@@ -8,7 +8,7 @@ public class AtomicityViolation {
     }
 
     public static void fuzzerTestOneInput(FuzzedDataProvider data) {
-        test(data.consumeInteger(), data.consumeInteger());
+        test(data.consumeInt(), data.consumeInt());
     }
 
     public static void test(final int x, final int y) {
@@ -18,17 +18,18 @@ public class AtomicityViolation {
         });
         Thread secondThread = new Thread(() -> {
             temp[0] = x * y;
+            System.out.println("%");
         });
         firstThread.start();
         secondThread.start();
     }
 
     private static int calculate(int y) {
-        for (int i=0;i<y;i++)
-        {
+        for (int i=0;i<y;i++) {
             y++;
         }
         delay(30);
+        System.out.println("$");
         return y;
     }
 

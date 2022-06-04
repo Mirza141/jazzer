@@ -7,10 +7,9 @@ public class Starvation {
   public static int queueSize = 15;
 
   public static void main(String[] args) {
-    EnquePassenger(new PassengerQueue());
-    test(queue,10);
+    test(EnquePassenger(new PassengerQueue()),10);
   }
-  public static void EnquePassenger(PassengerQueue queue)
+  public static PassengerQueue EnquePassenger(PassengerQueue queue)
   {
     for (int i = 0; i < queueSize; i++) {
       if (i % 2 == 0) {
@@ -19,10 +18,10 @@ public class Starvation {
         queue.add(new Passenger(PassengerClass.Business));
       }
     }
+    return queue;
   }
   public static void fuzzerTestOneInput(FuzzedDataProvider data){
-    EnquePassenger(new PassengerQueue());
-    test(queue,data.consumeInt());
+    test(EnquePassenger(new PassengerQueue()),data.consumeInt());
   }
   public static void test(PassengerQueue queue, int maxPassengers) {
     final int[] passengersOnboard = {0};
@@ -33,7 +32,7 @@ public class Starvation {
             passengersOnboard[0]++;
             queue.nextBusiness();
           }
-          processing(4000);
+          processing(400);
         }
       }
     });
@@ -75,6 +74,7 @@ public class Starvation {
       return passengers.isEmpty();
     }
     public Passenger nextEconomy() {
+      System.out.println("%");
       return passengers.poll();
     }
     public Passenger nextBusiness() {
@@ -88,6 +88,7 @@ public class Starvation {
       if (result != null) {
         passengers.remove(result);
       }
+      System.out.println("$");
       return result;
     }
   }

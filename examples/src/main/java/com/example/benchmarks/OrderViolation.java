@@ -34,7 +34,8 @@ public class OrderViolation {
         isScanned = true;
     }
     private static void print() {
-        if (isScanned) { System.out.println("printed"); }
-        else { System.out.println("Please scan first"); }
+        if (isScanned) { System.out.println("$"); }
+        else { System.out.println("%"); }
     }
 }
+//Done

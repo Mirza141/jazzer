@@ -5,21 +5,18 @@ import java.util.Queue;
 
 public class Suspension {
   public static void main(String[] args) {
-    int inventorySize = 10;
-    InventoryControl inventoryControl = new InventoryControl();
-    for (int i = 0; i < inventorySize; i++) {
-      inventoryControl.addInventory(i);
-    }
-    test(inventoryControl);
+    test(addInventory(10));
   }
   public static void fuzzerTestOneInput(FuzzedDataProvider data)
   {
-    int inventorySize = data.consumeInt();
+    test(addInventory(data.consumeInt());
+  }
+  public static InventoryControl addInventory(int inventorySize)
+  {
     InventoryControl inventoryControl = new InventoryControl();
     for (int i = 0; i < inventorySize; i++) {
       inventoryControl.addInventory(i);
     }
-    test(inventoryControl);
   }
   public static void test(InventoryControl inventory) {
     Thread firstAssociate = new Thread(() -> {
