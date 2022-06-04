@@ -17,6 +17,7 @@ public class Suspension {
     for (int i = 0; i < inventorySize; i++) {
       inventoryControl.addInventory(i);
     }
+    return inventoryControl;
   }
   public static void test(InventoryControl inventory) {
     Thread firstAssociate = new Thread(() -> {
