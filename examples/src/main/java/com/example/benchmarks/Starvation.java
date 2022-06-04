@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 public class Starvation {
   public static void main(String[] args) {
-    test(enquePassengers(50,30);
+    test(enquePassengers(50,30),30);
   }
   public static PassengerQueue enquePassengers(int queueSize, int businessPartition)
   { PassengerQueue queue = new PassengerQueue();
@@ -18,7 +18,9 @@ public class Starvation {
     return queue;
   }
   public static void fuzzerTestOneInput(FuzzedDataProvider data){
-    test(enquePassengers(data.consumeInt(1,1000),data.consumeInt(10,50));
+    int queueSize=data.consumeInt(1,1000);
+    int businessPartition=data.consumeInt(10,50);
+    test(enquePassengers(queueSize,businessPartition),queueSize);
   }
   public static void test(PassengerQueue queue, int maxPassengers) {
     final int[] passengersOnboard = {0};
