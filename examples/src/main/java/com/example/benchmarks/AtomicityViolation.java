@@ -1,4 +1,4 @@
-package com.example;
+package com.example.benchmarks;
 import com.code_intelligence.jazzer.api.FuzzedDataProvider;
 
 public class AtomicityViolation {
