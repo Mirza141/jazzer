@@ -21,10 +21,10 @@ public class Suspension {
   }
   public static void test(InventoryControl inventory) {
     Thread firstAssociate = new Thread(() -> {
-        check(inventory,"First");
+        check(inventory,"$");
     });
     Thread secondAssociate = new Thread(() -> {
-      check(inventory,"Second");
+      check(inventory,"%");
     });
     firstAssociate.start();
     secondAssociate.start();
@@ -32,7 +32,7 @@ public class Suspension {
   public static void check(InventoryControl inventory, String threadName)  {
     synchronized(inventory) {
       inventory.reduceQunatityOnHand();
-      System.out.println(threadName+" Associate is getting rid of items");
+      System.out.println(threadName);
     }
   }
   private static void processing(int delay) {
