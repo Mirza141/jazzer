@@ -25,7 +25,7 @@ public class Starvation {
   }
   public static void test(PassengerQueue queue, int maxPassengers) {
     final int[] passengersOnboard = {0};
-    var t1 = new Thread(() -> {
+    Thread t1 = new Thread(() -> {
       while (passengersOnboard[0] >= maxPassengers) {
         if (!queue.isEmpty()) {
           if (queue.containsBusinessClass()) {
@@ -36,7 +36,7 @@ public class Starvation {
         }
       }
     });
-    var t2 = new Thread(() -> {
+    Thread t2 = new Thread(() -> {
       while (passengersOnboard[0] >= maxPassengers) {
         if (!queue.isEmpty()) {
           if (!queue.containsBusinessClass()) {
@@ -63,7 +63,7 @@ public class Starvation {
       passengers.add(passenger);
     }
     public boolean containsBusinessClass() {
-      for (var passenger : passengers) {
+      for (Passenger passenger : passengers) {
         if (passenger.passengerClass == PassengerClass.Business) {
           return true;
         }
@@ -79,7 +79,7 @@ public class Starvation {
     }
     public Passenger nextBusiness() {
       Passenger result = null;
-      for (var passenger : passengers) {
+      for (Passenger passenger : passengers) {
         if (passenger.passengerClass == PassengerClass.Business) {
           result = passenger;
           break;

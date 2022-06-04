@@ -51,7 +51,7 @@ public class Suspension {
       while (!inventory.isEmpty()) {
           inventory.remove();
       }
-      processing(1000);
+      processing(50);
     }
     public boolean isEmpty() {
       return inventory.isEmpty();
