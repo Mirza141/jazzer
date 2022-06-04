@@ -3,25 +3,22 @@ import com.code_intelligence.jazzer.api.FuzzedDataProvider;
 import java.util.LinkedList;
 import java.util.Queue;
 public class Starvation {
-
-  public static int queueSize = 15;
-
   public static void main(String[] args) {
-    test(EnquePassenger(new PassengerQueue()),10);
+    test(enquePassengers(50,30);
   }
-  public static PassengerQueue EnquePassenger(PassengerQueue queue)
-  {
+  public static PassengerQueue enquePassengers(int queueSize, int businessPartition)
+  { PassengerQueue queue = new PassengerQueue();
     for (int i = 0; i < queueSize; i++) {
-      if (i % 2 == 0) {
-        queue.add(new Passenger(PassengerClass.Economy));
-      } else {
+      if (i % businessPartition == 0) {
         queue.add(new Passenger(PassengerClass.Business));
+      } else {
+        queue.add(new Passenger(PassengerClass.Economy));
       }
     }
     return queue;
   }
   public static void fuzzerTestOneInput(FuzzedDataProvider data){
-    test(EnquePassenger(new PassengerQueue()),data.consumeInt());
+    test(enquePassengers(data.consumeInt(1,1000),data.consumeInt(10,50));
   }
   public static void test(PassengerQueue queue, int maxPassengers) {
     final int[] passengersOnboard = {0};

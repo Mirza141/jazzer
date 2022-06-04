@@ -9,7 +9,7 @@ public class Suspension {
   }
   public static void fuzzerTestOneInput(FuzzedDataProvider data)
   {
-    test(addInventory(data.consumeInt()));
+    test(addInventory(data.consumeInt(10,50)));
   }
   public static InventoryControl addInventory(int inventorySize)
   {

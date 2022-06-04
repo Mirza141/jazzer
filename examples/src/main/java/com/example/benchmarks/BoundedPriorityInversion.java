@@ -3,24 +3,21 @@ import com.code_intelligence.jazzer.api.FuzzedDataProvider;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class BoundedPriorityInversion {
-    static boolean isScanned = false;
     public static void main(String[] args) {
         test(new BoundedPriorityInversion());
     }
 
     public static void fuzzerTestOneInput(FuzzedDataProvider data) {
-        BoundedPriorityInversion oV=new BoundedPriorityInversion();
-        if (data.consumeInt() % 2 == 0) { oV.isScanned=false; }
-        else { oV.isScanned=true; }
-        test(oV);
+        BoundedPriorityInversion bpi=new BoundedPriorityInversion();
+        test(bpi,data.consumeInt());
     }
-    public static void test(BoundedPriorityInversion bpi) {
+    public static void test(BoundedPriorityInversion bpi, int x) {
         ReentrantLock lock = new ReentrantLock();
+        boolean[] isScanned = new boolean[]{(x%2==0) ? true: false};
         Thread threadA = new Thread(() ->
         {
-            bpi.scan();
             if (lock.tryLock()) {
-                bpi.print();
+                bpi.print(isScanned[0]);
                 processing(4000);
             }
         });
@@ -28,7 +25,7 @@ public class BoundedPriorityInversion {
         {
             processing(2000);
             if (lock.tryLock()) {
-                bpi.print();
+                bpi.print(isScanned[0]);
                 processing(3000);
             }
         });
@@ -37,10 +34,7 @@ public class BoundedPriorityInversion {
         threadA.start();
         threadB.start();
     }
-    private static void scan() {
-        isScanned = true;
-    }
-    private static void print() {
+    private static void print(boolean isScanned) {
         if (isScanned) { System.out.println("$"); }
         else { System.out.println("%"); }
     }
