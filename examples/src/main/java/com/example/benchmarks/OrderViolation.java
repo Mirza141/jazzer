@@ -2,39 +2,36 @@ package com.example.benchmarks;
 import com.code_intelligence.jazzer.api.FuzzedDataProvider;
 
 public class OrderViolation {
-    static boolean isScanned = false;
 
     public static void main(String[] args) {
-        test(new OrderViolation());
+        test(new OrderViolation(),3%2);
     }
 
     public static void fuzzerTestOneInput(FuzzedDataProvider data) {
         OrderViolation oV=new OrderViolation();
-        if (data.consumeInt() % 2 == 0) { oV.isScanned=false; }
-        else { oV.isScanned=true; }
-        test(oV);
+        test(oV,data.consumeInt() % 2);
     }
-    public static void test(OrderViolation oV) {
+    public static void test(OrderViolation oV,int x) {
+        boolean[] isScanned = new boolean[]{(x==0) ? true: false};
         Thread firstThread = new Thread(() ->
         {
             synchronized (oV) {
-                oV.scan();
+               oV.scan(x);
             }
         });
         Thread secondThread = new Thread(() ->
         {
             synchronized (oV) {
-                oV.print();
+                oV.print(isScanned[0]);
             }
         });
         firstThread.start();
         secondThread.start();
     }
-    private static void scan() {
-        isScanned = true;
+    private static boolean scan(int x) {
+        return (x==0) ? true: false;
     }
-    private static void print() {
-        if (isScanned) { System.out.println("$"); }
-        else { System.out.println("%"); }
+    private static void print(boolean isScanned) {
+        if (!isScanned) { System.out.println("%"); } else { System.out.println("$"); }
     }
 }
