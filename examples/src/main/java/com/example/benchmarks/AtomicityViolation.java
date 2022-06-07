@@ -18,7 +18,6 @@ public class AtomicityViolation {
         });
         Thread secondThread = new Thread(() -> {
             temp[0] = x * y;
-            System.out.println("%");
         });
         firstThread.start();
         secondThread.start();
@@ -29,7 +28,6 @@ public class AtomicityViolation {
             y++;
         }
         delay(30);
-        System.out.println("$");
         return y;
     }
 
