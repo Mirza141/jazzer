@@ -17,7 +17,7 @@ public class BoundedPriorityInversion {
         Thread threadA = new Thread(() ->
         {
             if (lock.tryLock()) {
-                bpi.print(isScanned[0]);
+                bpi.print(isScanned[0],thread);
                 processing(4000);
             }
         });
@@ -35,8 +35,10 @@ public class BoundedPriorityInversion {
         threadB.start();
     }
     private static void print(boolean isScanned) {
-        if (isScanned) { System.out.println("$"); }
-        else { System.out.println("%"); }
+        if (isScanned) { //System.out.println("$");
+             }
+        else { //System.out.println("%");
+             }
     }
     private static void processing(int time) {
         try {
