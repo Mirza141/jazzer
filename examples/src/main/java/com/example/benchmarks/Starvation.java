@@ -73,7 +73,6 @@ public class Starvation {
       return passengers.isEmpty();
     }
     public Passenger nextEconomy() {
-      System.out.println("%");
       return passengers.poll();
     }
     public Passenger nextBusiness() {
@@ -87,7 +86,6 @@ public class Starvation {
       if (result != null) {
         passengers.remove(result);
       }
-      System.out.println("$");
       return result;
     }
   }
