@@ -21,18 +21,17 @@ public class Suspension {
   }
   public static void test(InventoryControl inventory) {
     Thread firstAssociate = new Thread(() -> {
-        check(inventory,"$");
+        check(inventory);
     });
     Thread secondAssociate = new Thread(() -> {
-      check(inventory,"%");
+      check(inventory);
     });
     firstAssociate.start();
     secondAssociate.start();
   }
-  public static void check(InventoryControl inventory, String threadName)  {
+  public static void check(InventoryControl inventory)  {
     synchronized(inventory) {
       inventory.reduceQunatityOnHand();
-      System.out.println(threadName);
     }
   }
   private static void processing(int delay) {
@@ -55,9 +54,6 @@ public class Suspension {
     }
     public boolean isEmpty() {
       return inventory.isEmpty();
-    }
-    public Integer nextInventory() {
-      return inventory.poll();
     }
   }
 }
