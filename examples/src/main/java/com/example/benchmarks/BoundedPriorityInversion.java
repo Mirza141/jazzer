@@ -17,7 +17,7 @@ public class BoundedPriorityInversion {
         Thread threadA = new Thread(() ->
         {
             if (lock.tryLock()) {
-                bpi.print(isScanned[0],thread);
+                bpi.print(isScanned[0]);
                 processing(4000);
             }
         });
