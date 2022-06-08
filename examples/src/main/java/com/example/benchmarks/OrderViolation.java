@@ -32,6 +32,10 @@ public class OrderViolation {
         return (x==0) ? true: false;
     }
     private static void print(boolean isScanned) {
-        if (!isScanned) { System.out.println("%"); } else { System.out.println("$"); }
+        if (!isScanned) {
+            //System.out.println("%");
+        } else {
+            //System.out.println("$");
+        }
     }
 }
