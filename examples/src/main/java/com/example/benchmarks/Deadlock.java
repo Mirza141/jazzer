@@ -55,7 +55,6 @@ public class Deadlock {
         for (Thread t : threads) {
             t.start();
         }
-        System.out.println(sumNumbers + "/" + sumSquares + "= something");
     }
 
     private static void delay(int delay) {
