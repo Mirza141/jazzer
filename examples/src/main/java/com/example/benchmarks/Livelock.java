@@ -15,25 +15,17 @@ public class Livelock {
 
     public static void test(final BankAccount studentAccount, final BankAccount universityAccount) {
         Thread t1 = new Thread() {
-            //int i=0, max=10;
             @Override
             public void run() {
-                //do {
                     studentAccount.transaction(studentAccount, universityAccount, 4000);
-                  //  i++;
-                //}while(i<max);
             }
         };
 
         Thread t2 = new Thread() {
-            //int i=0,max=10;
             @Override
             public void run() {
-                //do {
                     universityAccount.transaction(universityAccount, studentAccount, 2000);
-                  //  i++;
-                //}while(i<max);
-            }
+                      }
         };
         t1.start();
         t2.start();
@@ -77,13 +69,10 @@ public class Livelock {
 
         public boolean transaction(BankAccount from, BankAccount to, double amount) {
             if (from.withdraw(amount)) {
-                System.out.println("Withdrawing " + amount + " from " + accountNumber);
                 if (from.deposit(amount)) {
-                    System.out.println("Depositing " + amount + " to " + accountNumber);
                     return true;
                 } else {
                     from.deposit(amount);
-                    System.out.println("Refunding amount: " + amount + " to account: " + from.accountNumber);
                 }
             }
             return false;
