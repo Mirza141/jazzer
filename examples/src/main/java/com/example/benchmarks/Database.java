@@ -23,13 +23,13 @@ class Database {
         Thread t1 = new Thread() {
             @Override
             public void run() {
-                if(db.contains(a)) { db.replace(a, 2*N);  db.getId(2*N); }
+                { db.replace(a, 2*N);  }
             }
         };
         Thread t2 = new Thread() {
             @Override
             public void run() {
-                if(db.contains(b)) { db.replace(b, 3*N);  db.getId(3*N); }
+                { db.replace(b, 3*N);   }
             }
         };
         t1.start();
