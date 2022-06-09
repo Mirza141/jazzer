@@ -3,7 +3,7 @@ import java.util.HashMap;
 import com.code_intelligence.jazzer.api.FuzzedDataProvider;
 
 class Database {
-    final static int N = 128;
+    final static int N = 1280000000;
     private final HashMap<Integer, Entry> entries = new HashMap<Integer, Entry>();
     private int counter = 0;
 
