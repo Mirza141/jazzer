@@ -3,7 +3,7 @@ import java.util.HashMap;
 import com.code_intelligence.jazzer.api.FuzzedDataProvider;
 
 class Database {
-    final static int N = Integer.MAX_VALUE / 3;
+    final static int N = 1000;
     private final HashMap<Integer, Entry> entries = new HashMap<Integer, Entry>();
     private int counter = 0;
 
@@ -12,7 +12,7 @@ class Database {
     }
 
     public static void fuzzerTestOneInput(FuzzedDataProvider data) {
-        test(data.consumeInt() % N, data.consumeInt() % N);
+        test(data.consumeInt(), data.consumeInt());
     }
 
     public static void test(final int a, final int b) {
