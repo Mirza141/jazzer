@@ -23,18 +23,29 @@ class Database {
         Thread t1 = new Thread() {
             @Override
             public void run() {
-                db.replace(a, 2 * N);
+                if(db.contains(a)) { db.replace(a, 2*N);  db.getId(2*N); }
             }
         };
         Thread t2 = new Thread() {
             @Override
             public void run() {
-                db.replace(b, 3 * N);
+                if(db.contains(b)) { db.replace(b, 3*N);  db.getId(3*N); }
             }
         };
         t1.start();
         t2.start();
-        db.getId(2 * N);
+    }
+
+    private boolean contains(int a) {
+        if (entries.size() == 0) {
+            throw new IllegalArgumentException("database is empty");
+        }
+        for (Entry entry : entries.values()) {
+            if (entry.value == a) {
+                return true;
+            }
+        }
+        throw new IllegalArgumentException("value not found");
     }
 
     public void add(int value) {
