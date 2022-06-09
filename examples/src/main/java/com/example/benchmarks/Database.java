@@ -37,15 +37,12 @@ class Database {
     }
 
     private boolean contains(int a) {
-        if (entries.size() == 0) {
-            throw new IllegalArgumentException("database is empty");
-        }
         for (Entry entry : entries.values()) {
             if (entry.value == a) {
                 return true;
             }
         }
-        throw new IllegalArgumentException("value not found");
+        return false;
     }
 
     public void add(int value) {
