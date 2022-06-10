@@ -61,14 +61,14 @@ class Database {
     }
     public int getId(int value) {
         if (entries.size() == 0) {
-            throw new IllegalArgumentException("database is empty");
+            throw new IllegalArgumentException();
         }
         for (Entry entry : entries.values()) {
             if (entry.value == value) {
                 return entry.id;
             }
         }
-        throw new IllegalArgumentException("value not found");
+        throw new IllegalArgumentException();
     }
 
     private static class Entry {
