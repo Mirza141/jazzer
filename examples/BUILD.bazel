@@ -30,10 +30,74 @@ java_fuzz_target_test(
 java_fuzz_target_test(
     name = "Deadlock",
     srcs = [
-        "src/main/java/com/example/Deadlock.java",
+        "src/main/java/com/example/benchmarks/Deadlock.java",
     ],
     # Comment out the next line to keep the fuzzer running indefinitely.
-    target_class = "com.example.Deadlock",
+    target_class = "com.example.benchmarks.Deadlock",
+)
+java_fuzz_target_test(
+    name = "AtomicityViolation",
+    srcs = [
+        "src/main/java/com/example/benchmarks/AtomicityViolation.java",
+    ],
+    # Comment out the next line to keep the fuzzer running indefinitely.
+    target_class = "com.example.benchmarks.AtomicityViolation",
+)
+java_fuzz_target_test(
+    name = "BoundedPriorityInversion",
+    srcs = [
+        "src/main/java/com/example/benchmarks/BoundedPriorityInversion.java",
+    ],
+    # Comment out the next line to keep the fuzzer running indefinitely.
+    target_class = "com.example.benchmarks.BoundedPriorityInversion",
+)
+java_fuzz_target_test(
+    name = "Database",
+    srcs = [
+        "src/main/java/com/example/benchmarks/Database.java",
+    ],
+    # Comment out the next line to keep the fuzzer running indefinitely.
+    target_class = "com.example.benchmarks.Database",
+)
+java_fuzz_target_test(
+    name = "Livelock",
+    srcs = [
+        "src/main/java/com/example/benchmarks/Livelock.java",
+    ],
+    # Comment out the next line to keep the fuzzer running indefinitely.
+    target_class = "com.example.benchmarks.Livelock",
+)
+java_fuzz_target_test(
+    name = "OrderViolation",
+    srcs = [
+        "src/main/java/com/example/benchmarks/OrderViolation.java",
+    ],
+    # Comment out the next line to keep the fuzzer running indefinitely.
+    target_class = "com.example.benchmarks.OrderViolation",
+)
+java_fuzz_target_test(
+    name = "Starvation",
+    srcs = [
+        "src/main/java/com/example/benchmarks/Starvation.java",
+    ],
+    # Comment out the next line to keep the fuzzer running indefinitely.
+    target_class = "com.example.benchmarks.Starvation",
+)
+java_fuzz_target_test(
+    name = "Suspension",
+    srcs = [
+        "src/main/java/com/example/benchmarks/Suspension.java",
+    ],
+    # Comment out the next line to keep the fuzzer running indefinitely.
+    target_class = "com.example.benchmarks.Suspension",
+)
+java_fuzz_target_test(
+    name = "UnConditionalWait",
+    srcs = [
+        "src/main/java/com/example/benchmarks/UnConditionalWait.java",
+    ],
+    # Comment out the next line to keep the fuzzer running indefinitely.
+    target_class = "com.example.benchmarks.UnConditionalWait",
 )
 
 java_jni_library(
