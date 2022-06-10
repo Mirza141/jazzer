@@ -3,7 +3,7 @@ import java.util.HashMap;
 import com.code_intelligence.jazzer.api.FuzzedDataProvider;
 
 class Database {
-    final static int N = Integer.MAX_VALUE/3 ;
+    final static int N = 10000 ;
     private final HashMap<Integer, Entry> entries = new HashMap<Integer, Entry>();
     private int counter = 0;
 
@@ -17,7 +17,7 @@ class Database {
 
     public static void test(final int a, final int b) {
         final Database db = new Database();
-        for (int id = 0; id < N; id++) {
+        for (int id = 0; id < 100; id++) {
             db.add(id);
         }
         Thread t1 = new Thread() {
